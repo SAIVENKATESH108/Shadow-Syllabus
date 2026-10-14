@@ -57,7 +57,7 @@ class ResearchOrchestrationService:
 
     @classmethod
     def touch_heartbeat(cls, report_id: str) -> None:
-        """Update updated_at timestamp to renew worker lease and heartbeat for long-running pipelines."""
+        """Renew worker lease and heartbeat for long-running pipelines."""
         ResearchReport.objects.filter(id=report_id).update(updated_at=timezone.now())
 
     @classmethod

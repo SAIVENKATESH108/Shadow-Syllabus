@@ -107,7 +107,8 @@ class RobotsTxtValidator:
         normalized_target = f"{origin}{parsed.path}"
         if parsed.query:
             normalized_target += f"?{parsed.query}"
-        cache_key = f"robots_txt_status:{origin}:{hashlib.sha256(normalized_target.encode('utf-8')).hexdigest()}"
+        url_hash = hashlib.sha256(normalized_target.encode("utf-8")).hexdigest()
+        cache_key = f"robots_txt_status:{origin}:{url_hash}"
 
         # 1. Inspect Cache
         cached_data = cls._get_cache(cache_key)
