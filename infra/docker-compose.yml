@@ -1,0 +1,137 @@
+name: learning-platform
+
+services:
+  # 1. PostgreSQL 16 with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: platform-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-learning_platform_db}
+      POSTGRES_USER: ${POSTGRES_USER:-platform_dev_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-platform_dev_password_placeholder}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-platform_dev_user} -d ${POSTGRES_DB:-learning_platform_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis 7 Alpine (In-memory broker, cache, and Channels layer)
+  redis:
+    image: redis:7-alpine
+    container_name: platform-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # 3. MinIO S3-Compatible Storage for user uploads & learning media
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    container_name: platform-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-minio_dev_access_key}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-minio_dev_secret_key_placeholder}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 4. MinIO Bucket Initialization Helper
+  minio-init:
+    image: minio/mc:RELEASE.2024-05-09T17-04-24Z
+    container_name: platform-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set local http://minio:9000 ${AWS_ACCESS_KEY_ID:-minio_dev_access_key} ${AWS_SECRET_ACCESS_KEY:-minio_dev_secret_key_placeholder};
+      /usr/bin/mc mb --ignore-existing local/${AWS_STORAGE_BUCKET_NAME:-platform-dev-media};
+      /usr/bin/mc anonymous set download local/${AWS_STORAGE_BUCKET_NAME:-platform-dev-media};
+      exit 0;
+      "
+
+  # 5. Django Backend Development Server
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    container_name: platform-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env.example
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - AWS_S3_ENDPOINT_URL=http://minio:9000
+    command: python manage.py runserver 0.0.0.0:8000
+
+  # 6. Celery Async Task Worker
+  celery-worker:
+    build:
+      context: ../backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    container_name: platform-celery-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    env_file:
+      - ../.env.example
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    command: celery -A config worker -l info
+
+  # 7. Frontend Vite Dev Server
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../infra/docker/Dockerfile.frontend
+    container_name: platform-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
