@@ -1,0 +1,1 @@
+"""Modular Django applications namespace."""

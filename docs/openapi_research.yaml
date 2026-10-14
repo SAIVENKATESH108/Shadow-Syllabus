@@ -1,0 +1,1968 @@
+openapi: 3.0.3
+info:
+  title: Open Student Learning Platform - Multi-Agent Research API
+  version: 1.0.0
+  description: Open Student Learning Platform Multi-Agent Research API service. Provides
+    asynchronous DAG research pipelines, run-scoped artifact provenance, verification
+    confidence tracking, and fact-checker abstention guarantees.
+paths:
+  /api/v1/ai/coach/:
+    post:
+      operationId: ai_coach_create
+      description: Endpoint mediating student interaction with AI models.
+      tags:
+      - ai
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIStudyCoachRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AIStudyCoachRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AIStudyCoachRequestRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIStudyCoachRequest'
+          description: ''
+  /api/v1/assessments/assignments/:
+    get:
+      operationId: assessments_assignments_list
+      description: Assignments ViewSet.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAssignmentList'
+          description: ''
+    post:
+      operationId: assessments_assignments_create
+      description: Assignments ViewSet.
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/v1/assessments/assignments/{id}/:
+    get:
+      operationId: assessments_assignments_retrieve
+      description: Assignments ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this assignment.
+        required: true
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+    put:
+      operationId: assessments_assignments_update
+      description: Assignments ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this assignment.
+        required: true
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+    patch:
+      operationId: assessments_assignments_partial_update
+      description: Assignments ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this assignment.
+        required: true
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAssignmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAssignmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAssignmentRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+    delete:
+      operationId: assessments_assignments_destroy
+      description: Assignments ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this assignment.
+        required: true
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/assessments/feedback/:
+    get:
+      operationId: assessments_feedback_list
+      description: Feedback ViewSet.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFeedbackList'
+          description: ''
+    post:
+      operationId: assessments_feedback_create
+      description: Feedback ViewSet.
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+  /api/v1/assessments/feedback/{id}/:
+    get:
+      operationId: assessments_feedback_retrieve
+      description: Feedback ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this feedback.
+        required: true
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+    put:
+      operationId: assessments_feedback_update
+      description: Feedback ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this feedback.
+        required: true
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+    patch:
+      operationId: assessments_feedback_partial_update
+      description: Feedback ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this feedback.
+        required: true
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFeedbackRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFeedbackRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFeedbackRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+    delete:
+      operationId: assessments_feedback_destroy
+      description: Feedback ViewSet.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this feedback.
+        required: true
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/assessments/submissions/:
+    get:
+      operationId: assessments_submissions_list
+      description: Submissions ViewSet with strict object-level permissions (students
+        access own records).
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSubmissionList'
+          description: ''
+    post:
+      operationId: assessments_submissions_create
+      description: Submissions ViewSet with strict object-level permissions (students
+        access own records).
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+  /api/v1/assessments/submissions/{id}/:
+    get:
+      operationId: assessments_submissions_retrieve
+      description: Submissions ViewSet with strict object-level permissions (students
+        access own records).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this submission.
+        required: true
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+    put:
+      operationId: assessments_submissions_update
+      description: Submissions ViewSet with strict object-level permissions (students
+        access own records).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this submission.
+        required: true
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+    patch:
+      operationId: assessments_submissions_partial_update
+      description: Submissions ViewSet with strict object-level permissions (students
+        access own records).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this submission.
+        required: true
+      tags:
+      - assessments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubmissionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubmissionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubmissionRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+          description: ''
+    delete:
+      operationId: assessments_submissions_destroy
+      description: Submissions ViewSet with strict object-level permissions (students
+        access own records).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this submission.
+        required: true
+      tags:
+      - assessments
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/erasure-request/:
+    post:
+      operationId: auth_erasure_request_create
+      description: Trigger GDPR / DPDP right-to-be-forgotten request.
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/me/:
+    get:
+      operationId: auth_me_retrieve
+      description: Retrieve or update current authenticated user with object-level
+        ownership check.
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: auth_me_update
+      description: Retrieve or update current authenticated user with object-level
+        ownership check.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: auth_me_partial_update
+      description: Retrieve or update current authenticated user with object-level
+        ownership check.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: Public registration endpoint with age verification.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegistration'
+          description: ''
+  /api/v1/courses/items/:
+    get:
+      operationId: courses_items_list
+      description: ViewSet for managing courses with object-level instructor permissions.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - courses
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCourseList'
+          description: ''
+    post:
+      operationId: courses_items_create
+      description: ViewSet for managing courses with object-level instructor permissions.
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+  /api/v1/courses/items/{slug}/:
+    get:
+      operationId: courses_items_retrieve
+      description: ViewSet for managing courses with object-level instructor permissions.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - courses
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+    put:
+      operationId: courses_items_update
+      description: ViewSet for managing courses with object-level instructor permissions.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+    patch:
+      operationId: courses_items_partial_update
+      description: ViewSet for managing courses with object-level instructor permissions.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+    delete:
+      operationId: courses_items_destroy
+      description: ViewSet for managing courses with object-level instructor permissions.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - courses
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/courses/lessons/:
+    get:
+      operationId: courses_lessons_list
+      description: ViewSet for managing lessons within a course.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - courses
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLessonList'
+          description: ''
+    post:
+      operationId: courses_lessons_create
+      description: ViewSet for managing lessons within a course.
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/v1/courses/lessons/{id}/:
+    get:
+      operationId: courses_lessons_retrieve
+      description: ViewSet for managing lessons within a course.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this lesson.
+        required: true
+      tags:
+      - courses
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    put:
+      operationId: courses_lessons_update
+      description: ViewSet for managing lessons within a course.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this lesson.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    patch:
+      operationId: courses_lessons_partial_update
+      description: ViewSet for managing lessons within a course.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this lesson.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    delete:
+      operationId: courses_lessons_destroy
+      description: ViewSet for managing lessons within a course.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this lesson.
+        required: true
+      tags:
+      - courses
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/research/reports/:
+    get:
+      operationId: research_reports_list
+      description: Lists all non-deleted research reports owned by the authenticated
+        user.
+      summary: List user research reports
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Research
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResearchReportList'
+          description: ''
+        '401':
+          description: Authentication required
+    post:
+      operationId: research_reports_create
+      description: Submits a query to the multi-agent research pipeline with atomic
+        concurrency limit validation (max 3 concurrent active tasks per user). Returns
+        429 Too Many Requests if quota/concurrency is exhausted.
+      summary: Create research inquiry
+      tags:
+      - Research
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateResearchInquiryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateResearchInquiryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateResearchInquiryRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchReport'
+          description: ''
+        '400':
+          description: Validation error in query or idempotency key
+        '401':
+          description: Authentication credentials were not provided
+        '429':
+          description: 'Too Many Requests: Maximum 3 parallel research tasks allowed
+            per user'
+  /api/v1/research/reports/{id}/:
+    get:
+      operationId: research_reports_retrieve
+      description: Returns a research report and its verified/unverified artifacts.
+        By default, only active current artifacts are returned. Pass include_superseded=true
+        to inspect historical superseded artifacts from prior completed runs.
+      summary: Retrieve research report
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this research report.
+        required: true
+      - in: query
+        name: include_superseded
+        schema:
+          type: boolean
+          default: false
+        description: Include superseded historical artifacts from prior runs
+      tags:
+      - Research
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchReport'
+          description: ''
+        '401':
+          description: Authentication required
+        '404':
+          description: Report not found or not owned by user
+    put:
+      operationId: research_reports_update
+      description: ViewSet for managing research reports with strict object-level
+        isolation.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this research report.
+        required: true
+      tags:
+      - Research
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResearchReportRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResearchReportRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResearchReportRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchReport'
+          description: ''
+    patch:
+      operationId: research_reports_partial_update
+      description: ViewSet for managing research reports with strict object-level
+        isolation.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this research report.
+        required: true
+      tags:
+      - Research
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResearchReportRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResearchReportRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResearchReportRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchReport'
+          description: ''
+    delete:
+      operationId: research_reports_destroy
+      description: ViewSet for managing research reports with strict object-level
+        isolation.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this research report.
+        required: true
+      tags:
+      - Research
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/research/reports/{id}/rerun/:
+    post:
+      operationId: research_reports_rerun_create
+      description: Triggers a rerun of the research pipeline for an existing report.
+        Prior completed artifacts remain active until the new run succeeds, at which
+        point they are atomically marked superseded. Enforces per-user concurrency
+        limit.
+      summary: Rerun research pipeline
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this research report.
+        required: true
+      tags:
+      - Research
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchReport'
+          description: ''
+        '401':
+          description: Authentication required
+        '404':
+          description: Report not found or not owned by user
+        '429':
+          description: 'Too Many Requests: Maximum 3 parallel research tasks allowed
+            per user'
+components:
+  schemas:
+    AIStudyCoachRequest:
+      type: object
+      description: Input serializer for study assistance requests.
+      properties:
+        prompt:
+          type: string
+          maxLength: 4000
+        context:
+          type: string
+          default: ''
+          maxLength: 8000
+      required:
+      - prompt
+    AIStudyCoachRequestRequest:
+      type: object
+      description: Input serializer for study assistance requests.
+      properties:
+        prompt:
+          type: string
+          minLength: 1
+          maxLength: 4000
+        context:
+          type: string
+          minLength: 1
+          default: ''
+          maxLength: 8000
+      required:
+      - prompt
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        course:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 255
+        instructions:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - course
+      - created_at
+      - id
+      - instructions
+      - title
+    AssignmentRequest:
+      type: object
+      properties:
+        course:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        instructions:
+          type: string
+          minLength: 1
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - course
+      - instructions
+      - title
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        instructor:
+          type: string
+          format: uuid
+          readOnly: true
+        is_published:
+          type: boolean
+        lessons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - description
+      - id
+      - instructor
+      - lessons
+      - slug
+      - title
+    CourseRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          minLength: 1
+        is_published:
+          type: boolean
+      required:
+      - description
+      - slug
+      - title
+    CreateResearchInquiryRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 5
+          maxLength: 500
+        idempotency_key:
+          type: string
+          default: ''
+          maxLength: 64
+      required:
+      - query
+    Feedback:
+      type: object
+      description: Mixin explicitly tagging AI-generated or inferred content as unverified.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        submission:
+          type: string
+          format: uuid
+        author:
+          type: string
+          format: uuid
+          nullable: true
+        content:
+          type: string
+        is_ai_generated:
+          type: boolean
+        is_unverified:
+          type: boolean
+          readOnly: true
+          default: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content
+      - created_at
+      - id
+      - is_unverified
+      - submission
+    FeedbackRequest:
+      type: object
+      description: Mixin explicitly tagging AI-generated or inferred content as unverified.
+      properties:
+        submission:
+          type: string
+          format: uuid
+        author:
+          type: string
+          format: uuid
+          nullable: true
+        content:
+          type: string
+          minLength: 1
+        is_ai_generated:
+          type: boolean
+      required:
+      - content
+      - submission
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        course:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 255
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content
+      - course
+      - created_at
+      - id
+      - title
+    LessonRequest:
+      type: object
+      properties:
+        course:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        content:
+          type: string
+          minLength: 1
+      required:
+      - content
+      - course
+      - title
+    PaginatedAssignmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+    PaginatedCourseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+    PaginatedFeedbackList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feedback'
+    PaginatedLessonList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+    PaginatedResearchReportList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResearchReport'
+    PaginatedSubmissionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Submission'
+    PatchedAssignmentRequest:
+      type: object
+      properties:
+        course:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        instructions:
+          type: string
+          minLength: 1
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+    PatchedCourseRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          minLength: 1
+        is_published:
+          type: boolean
+    PatchedFeedbackRequest:
+      type: object
+      description: Mixin explicitly tagging AI-generated or inferred content as unverified.
+      properties:
+        submission:
+          type: string
+          format: uuid
+        author:
+          type: string
+          format: uuid
+          nullable: true
+        content:
+          type: string
+          minLength: 1
+        is_ai_generated:
+          type: boolean
+    PatchedLessonRequest:
+      type: object
+      properties:
+        course:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        content:
+          type: string
+          minLength: 1
+    PatchedResearchReportRequest:
+      type: object
+      description: Mixin explicitly tagging AI-generated or inferred content as unverified.
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 500
+        title:
+          type: string
+          maxLength: 255
+        summary:
+          type: string
+        idempotency_key:
+          type: string
+          maxLength: 64
+        confidence_score:
+          type: number
+          format: double
+          nullable: true
+    PatchedSubmissionRequest:
+      type: object
+      properties:
+        assignment:
+          type: string
+          format: uuid
+        submitted_text:
+          type: string
+        file_attachment_key:
+          type: string
+          description: S3 key for student uploaded document
+          maxLength: 500
+    PatchedUserRequest:
+      type: object
+      description: Safe public/authenticated representation of a User.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+    ResearchReport:
+      type: object
+      description: Mixin explicitly tagging AI-generated or inferred content as unverified.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        query:
+          type: string
+          maxLength: 500
+        title:
+          type: string
+          maxLength: 255
+        summary:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          readOnly: true
+        pipeline_run_id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Current pipeline execution run identifier
+        idempotency_key:
+          type: string
+          maxLength: 64
+        confidence_score:
+          type: number
+          format: double
+          nullable: true
+        confidence_display:
+          type: string
+          description: Display confidence as claim-verification ratio per OpenAPI
+            specification.
+          readOnly: true
+        verified_claims_count:
+          type: integer
+          readOnly: true
+        total_claims_count:
+          type: integer
+          readOnly: true
+        is_unverified:
+          type: boolean
+          readOnly: true
+          default: true
+        needs_review:
+          type: boolean
+          readOnly: true
+        is_abstain:
+          type: boolean
+          readOnly: true
+          description: True when insufficient verified evidence exists
+        retrieval_error_code:
+          type: string
+          readOnly: true
+          description: Standardized retrieval failure code
+        retrieval_error_detail:
+          type: string
+          readOnly: true
+          description: Sanitized, bounded failure detail
+        sections:
+          readOnly: true
+        sources:
+          readOnly: true
+        claims:
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - claims
+      - confidence_display
+      - created_at
+      - id
+      - is_abstain
+      - is_unverified
+      - needs_review
+      - pipeline_run_id
+      - query
+      - retrieval_error_code
+      - retrieval_error_detail
+      - sections
+      - sources
+      - status
+      - total_claims_count
+      - updated_at
+      - verified_claims_count
+    ResearchReportRequest:
+      type: object
+      description: Mixin explicitly tagging AI-generated or inferred content as unverified.
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 500
+        title:
+          type: string
+          maxLength: 255
+        summary:
+          type: string
+        idempotency_key:
+          type: string
+          maxLength: 64
+        confidence_score:
+          type: number
+          format: double
+          nullable: true
+      required:
+      - query
+    RoleEnum:
+      enum:
+      - STUDENT
+      - EDUCATOR
+      - GUARDIAN
+      - ADMIN
+      type: string
+      description: |-
+        * `STUDENT` - Student
+        * `EDUCATOR` - Educator
+        * `GUARDIAN` - Guardian
+        * `ADMIN` - Administrator
+    StatusEnum:
+      enum:
+      - PENDING
+      - ORCHESTRATING
+      - RESEARCHING
+      - FACT_CHECKING
+      - WRITING
+      - COMPLETED
+      - FAILED
+      type: string
+      description: |-
+        * `PENDING` - Pending
+        * `ORCHESTRATING` - Orchestrating Subtopics
+        * `RESEARCHING` - Researching Literature
+        * `FACT_CHECKING` - Fact-Checking Claims
+        * `WRITING` - Synthesizing Report
+        * `COMPLETED` - Completed
+        * `FAILED` - Failed
+    Submission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        assignment:
+          type: string
+          format: uuid
+        student:
+          type: string
+          format: uuid
+          readOnly: true
+        submitted_text:
+          type: string
+        file_attachment_key:
+          type: string
+          description: S3 key for student uploaded document
+          maxLength: 500
+        feedback_entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feedback'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - assignment
+      - created_at
+      - feedback_entries
+      - id
+      - student
+    SubmissionRequest:
+      type: object
+      properties:
+        assignment:
+          type: string
+          format: uuid
+        submitted_text:
+          type: string
+        file_attachment_key:
+          type: string
+          description: S3 key for student uploaded document
+          maxLength: 500
+      required:
+      - assignment
+    User:
+      type: object
+      description: Safe public/authenticated representation of a User.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        is_minor:
+          type: boolean
+          readOnly: true
+          description: True if student is under statutory age of majority
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - is_minor
+    UserRegistration:
+      type: object
+      description: Registration serializer ensuring password hashing and age determination.
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: Used solely for age verification; minimal retention
+      required:
+      - email
+    UserRegistrationRequest:
+      type: object
+      description: Registration serializer ensuring password hashing and age determination.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 10
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: Used solely for age verification; minimal retention
+        guardian_email:
+          type: string
+          format: email
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - password
+    UserRequest:
+      type: object
+      description: Safe public/authenticated representation of a User.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - email
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
