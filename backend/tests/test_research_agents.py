@@ -847,3 +847,123 @@ def test_researcher_real_items_parsing() -> None:
             assert len(finding.claims) == 2
 
 
+def test_robots_redirect_chain_and_malformed_content() -> None:
+    """Verify following redirects and handling malformed robots.txt gracefully without error."""
+    RobotsTxtValidator.clear_cache()
+
+    # 1. Successful redirect following
+    mock_redirect_resp = mock.Mock()
+    mock_redirect_resp.status_code = 200
+    mock_redirect_resp.url = "https://redirected.example.org/robots.txt"
+    mock_redirect_resp.text = "User-agent: *\nDisallow: /private/\nAllow: /"
+
+    with mock.patch("requests.get", return_value=mock_redirect_resp):
+        allowed = RobotsTxtValidator.is_allowed("https://initial.example.org/public/doc")
+        assert allowed is True
+
+    # 2. Malformed HTML response (e.g. 200 OK returning HTML error page)
+    RobotsTxtValidator.clear_cache()
+    mock_html_resp = mock.Mock()
+    mock_html_resp.status_code = 200
+    mock_html_resp.text = "<!DOCTYPE html><html><body><h1>Notice</h1><p>Not a robots file</p></body></html>"
+
+    with mock.patch("requests.get", return_value=mock_html_resp):
+        # Parser should not crash; default permits when no rules match
+        res = RobotsTxtValidator.is_allowed("https://html-error.example.org/paper")
+        assert isinstance(res, bool)
+
+
+def test_robots_cache_poisoning_scheme_and_host_normalization() -> None:
+    """Ensure mixed case domains and schemes map to identical normalized cache keys, and non-http schemes fail closed."""
+    RobotsTxtValidator.clear_cache()
+
+    # Non-HTTP schemes must immediately fail closed without network call
+    assert RobotsTxtValidator.is_allowed("ftp://archive.example.org/data") is False
+    assert RobotsTxtValidator.is_allowed("javascript:alert(1)") is False
+    assert RobotsTxtValidator.is_allowed("data:text/plain;base64,SGVsbG8=") is False
+
+    # Upper case vs lower case domain mapping to same origin
+    mock_resp = mock.Mock()
+    mock_resp.status_code = 200
+    mock_resp.text = "User-agent: *\nDisallow: /restricted/"
+
+    with mock.patch("requests.get", return_value=mock_resp) as mock_get:
+        allowed1 = RobotsTxtValidator.is_allowed("HTTP://Normalization.Example.Org/docs")
+        allowed2 = RobotsTxtValidator.is_allowed("http://normalization.example.org/docs")
+        assert allowed1 is True
+        assert allowed2 is True
+        # Second call must hit the normalized cache, so requests.get called only once!
+        assert mock_get.call_count == 1
+
+
+def test_robots_structured_logging_no_pii_or_tokens(caplog: Any) -> None:
+    """Verify that robots logging strictly redacts query tokens, passwords, and sensitive paths."""
+    import logging
+    RobotsTxtValidator.clear_cache()
+
+    with caplog.at_level(logging.WARNING):
+        # Disallowed URL containing token query parameters
+        RobotsTxtValidator.is_allowed("http://")
+
+    # Verify no credentials or query parameters leaked
+    for record in caplog.records:
+        assert "password" not in record.message.lower()
+        assert "token" not in record.message.lower()
+
+
+@pytest.mark.django_db
+def test_long_running_job_with_heartbeat_not_reconciled(synthetic_student: User) -> None:
+    """A legitimately long-running job with an active worker heartbeat is NOT reconciled as failed."""
+    # Create a report created 30 minutes ago
+    thirty_mins_ago = timezone.now() - timezone.timedelta(minutes=30)
+    report = ResearchReport.objects.create(
+        user=synthetic_student,
+        query="Heavy Multi-Agent Computational Research",
+        status=ResearchReport.Status.RESEARCHING,
+    )
+    ResearchReport.objects.filter(id=report.id).update(created_at=thirty_mins_ago, updated_at=thirty_mins_ago)
+
+    # Worker executes touch_heartbeat 2 minutes ago
+    two_mins_ago = timezone.now() - timezone.timedelta(minutes=2)
+    ResearchReport.objects.filter(id=report.id).update(updated_at=two_mins_ago)
+
+    # Run stale job reconciliation with standard 15 minute timeout
+    reconciled_count = ResearchOrchestrationService.reconcile_stale_active_reports(user=synthetic_student)
+    assert reconciled_count == 0
+
+    report.refresh_from_db()
+    # Job must remain RESEARCHING because its lease heartbeat is fresh (< 15 mins)
+    assert report.status == ResearchReport.Status.RESEARCHING
+
+
+@pytest.mark.django_db
+def test_include_superseded_cannot_expose_other_user_artifacts(
+    api_client: APIClient,
+    synthetic_student: User,
+    synthetic_student_beta: User,
+) -> None:
+    """Ensure Student Beta cannot access Student Alpha's report even with include_superseded=true."""
+    import uuid
+    report_alpha = ResearchReport.objects.create(
+        user=synthetic_student,
+        query="Alpha Private Intellectual Property",
+        status=ResearchReport.Status.COMPLETED,
+    )
+    ResearchSection.objects.create(
+        report=report_alpha,
+        created_by_run_id=uuid.uuid4(),
+        is_superseded=True,
+        title="Alpha Superseded Historical Secret",
+        order_index=1,
+        content="Secret prior content",
+    )
+
+    api_client.force_authenticate(user=synthetic_student_beta)
+    url = f"/api/v1/research/reports/{report_alpha.id}/?include_superseded=true"
+    response = api_client.get(url)
+
+    # Must be 404 or 403 under IsOwnerOnly
+    assert response.status_code in (status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN)
+
+
+

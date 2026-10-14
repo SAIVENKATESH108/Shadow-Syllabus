@@ -87,16 +87,27 @@ class RobotsTxtValidator:
     @classmethod
     def is_allowed(cls, url: str) -> bool:
         """Check if URL fetching is allowed under robots.txt (Fail-Closed)."""
-        parsed = urllib.parse.urlparse(url)
-        if not parsed.scheme or not parsed.netloc:
+        parsed = urllib.parse.urlparse(url.strip())
+        scheme = parsed.scheme.lower()
+        if scheme not in ("http", "https"):
+            logger.warning(
+                "robots_txt_fetch_blocked", extra={"domain": "", "reason": "UNSUPPORTED_SCHEME"}
+            )
+            return False
+
+        netloc = parsed.netloc.lower()
+        if not netloc:
             logger.warning(
                 "robots_txt_fetch_blocked", extra={"domain": "", "reason": "MALFORMED_URL"}
             )
             return False
 
-        origin = f"{parsed.scheme}://{parsed.netloc}"
+        origin = f"{scheme}://{netloc}"
         robots_url = f"{origin}/robots.txt"
-        cache_key = f"robots_txt_status:{origin}:{hashlib.sha256(url.encode('utf-8')).hexdigest()}"
+        normalized_target = f"{origin}{parsed.path}"
+        if parsed.query:
+            normalized_target += f"?{parsed.query}"
+        cache_key = f"robots_txt_status:{origin}:{hashlib.sha256(normalized_target.encode('utf-8')).hexdigest()}"
 
         # 1. Inspect Cache
         cached_data = cls._get_cache(cache_key)
