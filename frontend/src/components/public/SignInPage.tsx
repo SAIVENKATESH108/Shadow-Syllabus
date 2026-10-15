@@ -138,19 +138,30 @@ export const SignInPage: React.FC = () => {
           </button>
         </form>
 
-        {/* Demo Fast Login */}
-        <div className="pt-2 border-t border-academic-slate-200 dark:border-academic-slate-700 text-center">
-          <button
-            type="button"
-            onClick={() => {
-              login("student@delhi.ac.in");
-              navigate(from, { replace: true });
-            }}
-            className="text-label-sm font-semibold text-academic-primary hover:underline"
+        {/* Local Development Only: Synthetic Demo Login (Excluded from Production Builds) */}
+        {import.meta.env.DEV && (
+          <div
+            data-testid="dev-demo-login-container"
+            className="pt-2 border-t border-academic-slate-200 dark:border-academic-slate-700 text-center space-y-1"
           >
-            Quick Demo Sign In as DU Distributed Systems Student
-          </button>
-        </div>
+            <span className="inline-block px-2 py-0.5 text-xs font-mono font-semibold bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 rounded border border-amber-300 dark:border-amber-800">
+              DEV ONLY &middot; Synthetic Non-Privileged Account
+            </span>
+            <div>
+              <button
+                type="button"
+                data-testid="dev-quick-demo-login-btn"
+                onClick={() => {
+                  login("synthetic-demo-student@local.dev");
+                  navigate(from, { replace: true });
+                }}
+                className="text-label-sm font-semibold text-academic-primary hover:underline"
+              >
+                Quick Demo Sign In (Local Synthetic Student)
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Link to Signup */}
         <div className="text-center text-body-sm text-academic-slate-600 dark:text-academic-slate-400">

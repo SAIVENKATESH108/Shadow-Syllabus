@@ -23,7 +23,7 @@ interface UIState {
   activeReportId: string | null;
   includeSuperseded: boolean;
   isAuthenticated: boolean;
-  userProfile: { username: string; email?: string; isMinor: boolean; isGuest: boolean } | null;
+  userProfile: { username: string; email?: string; isMinor: boolean; isGuest: boolean; role?: "student" | "guest" } | null;
   toggleTheme: () => void;
   setLocale: (locale: "en" | "hi") => void;
   setActiveScreen: (screen: ScreenType) => void;
@@ -33,7 +33,7 @@ interface UIState {
   setFontSizeScale: (scale: "normal" | "large" | "x-large") => void;
   setActiveReportId: (id: string | null) => void;
   setIncludeSuperseded: (include: boolean) => void;
-  setUserProfile: (profile: { username: string; email?: string; isMinor: boolean; isGuest: boolean } | null) => void;
+  setUserProfile: (profile: { username: string; email?: string; isMinor: boolean; isGuest: boolean; role?: "student" | "guest" } | null) => void;
   login: (email?: string) => void;
   logout: () => void;
 }
@@ -54,8 +54,8 @@ export const useUIStore = create<UIState>((set) => ({
   fontSizeScale: "normal",
   activeReportId: null,
   includeSuperseded: false,
-  isAuthenticated: true,
-  userProfile: { username: "Learner", email: "student@siksha.edu", isMinor: false, isGuest: false },
+  isAuthenticated: false,
+  userProfile: null,
   toggleTheme: () =>
     set((state) => {
       const nextTheme = state.theme === "light" ? "dark" : "light";
@@ -80,7 +80,7 @@ export const useUIStore = create<UIState>((set) => ({
   login: (email = "student@siksha.edu") =>
     set({
       isAuthenticated: true,
-      userProfile: { username: email.split("@")[0], email, isMinor: false, isGuest: false },
+      userProfile: { username: email.split("@")[0], email, isMinor: false, isGuest: false, role: "student" },
     }),
   logout: () =>
     set({

@@ -56,9 +56,7 @@ describe("Content Security Policy (CSP) Regression & Invariant Tests", () => {
 
   it("proves compiled dist/index.html enforces production CSP with zero localhost and zero broad https: connect-src", () => {
     const distPath = path.resolve(__dirname, "../../dist/index.html");
-    if (!fs.existsSync(distPath)) {
-      return;
-    }
+    expect(fs.existsSync(distPath)).toBe(true);
     const distHtml = fs.readFileSync(distPath, "utf-8");
 
     // Must not leak development placeholder
@@ -68,10 +66,26 @@ describe("Content Security Policy (CSP) Regression & Invariant Tests", () => {
     expect(distHtml).not.toContain("localhost");
     expect(distHtml).not.toContain("127.0.0.1");
     expect(distHtml).not.toContain("ws://");
+    expect(distHtml).not.toContain("http://");
 
     // Regression: must not contain broad https: in connect-src
     expect(distHtml).not.toContain("connect-src 'self' https:");
     expect(distHtml).toContain("connect-src 'self'");
+  });
+
+  it("proves Quick Demo Login and synthetic credentials are completely absent from production build assets", () => {
+    const assetsDir = path.resolve(__dirname, "../../dist/assets");
+    expect(fs.existsSync(assetsDir)).toBe(true);
+    const files = fs.readdirSync(assetsDir).filter((f) => f.endsWith(".js"));
+    expect(files.length).toBeGreaterThan(0);
+
+    for (const file of files) {
+      const content = fs.readFileSync(path.join(assetsDir, file), "utf-8");
+      // Tree-shaking must eliminate the dev-only branch
+      expect(content).not.toContain("dev-quick-demo-login-btn");
+      expect(content).not.toContain("synthetic-demo-student@local.dev");
+      expect(content).not.toContain("Quick Demo Sign In");
+    }
   });
 });
 

@@ -83,4 +83,67 @@ describe("Frontend Core & Security UI Tests", () => {
     fireEvent.click(langBtn);
     expect(screen.getByText("शिक्षा ओपनलर्न")).toBeInTheDocument();
   });
+
+  it("validates sign-in form validation and prevents submission with invalid credentials", async () => {
+    useUIStore.setState({ isAuthenticated: false });
+    window.history.pushState({}, "Sign In", "/signin");
+
+    render(<App />);
+    expect(await screen.findByText("Sign In to Siksha OpenLearn")).toBeInTheDocument();
+
+    const emailInput = screen.getByLabelText("Email Address");
+    const passwordInput = screen.getByLabelText("Password");
+    const submitBtn = screen.getByRole("button", { name: /^Sign In$/i });
+    const form = submitBtn.closest("form")!;
+
+    // 1. Invalid email
+    fireEvent.change(emailInput, { target: { value: "invalid-email" } });
+    fireEvent.change(passwordInput, { target: { value: "secret123" } });
+    fireEvent.submit(form);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Please provide a valid student or institutional email address.");
+
+    // 2. Short password
+    fireEvent.change(emailInput, { target: { value: "student@university.edu" } });
+    fireEvent.change(passwordInput, { target: { value: "123" } });
+    fireEvent.submit(form);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Password must be at least 6 characters.");
+  });
+
+  it("supports dev-only synthetic demo sign-in and assigns non-privileged student role", async () => {
+    useUIStore.setState({ isAuthenticated: false });
+    window.history.pushState({}, "Sign In", "/signin");
+
+    render(<App />);
+    const demoBtn = await screen.findByTestId("dev-quick-demo-login-btn");
+    expect(demoBtn).toBeInTheDocument();
+    expect(screen.getByText(/DEV ONLY/i)).toBeInTheDocument();
+
+    fireEvent.click(demoBtn);
+
+    const store = useUIStore.getState();
+    expect(store.isAuthenticated).toBe(true);
+    expect(store.userProfile?.email).toBe("synthetic-demo-student@local.dev");
+    expect(store.userProfile?.role).toBe("student");
+  });
+
+  it("handles sign-out flow clearing session state and revoking dashboard access", async () => {
+    useUIStore.setState({
+      isAuthenticated: true,
+      userProfile: { username: "active_student", email: "student@university.edu", isMinor: false, isGuest: false, role: "student" },
+    });
+    window.history.pushState({}, "Dashboard", "/dashboard");
+
+    render(<App />);
+    expect(screen.getByRole("navigation", { name: "Main Navigation" })).toBeInTheDocument();
+
+    const userMenuBtn = screen.getByRole("button", { name: /active_student/i });
+    fireEvent.click(userMenuBtn);
+
+    const signOutBtn = screen.getByRole("menuitem", { name: "Sign Out" });
+    fireEvent.click(signOutBtn);
+
+    const store = useUIStore.getState();
+    expect(store.isAuthenticated).toBe(false);
+    expect(store.userProfile).toBeNull();
+  });
 });
