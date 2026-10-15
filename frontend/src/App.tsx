@@ -1,43 +1,97 @@
 import React from "react";
-import { StudyCoach } from "./components/StudyCoach";
-import { GraduationCap, ShieldCheck } from "lucide-react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PublicLayout } from "./components/layout/PublicLayout";
+import { DashboardLayout } from "./components/layout/DashboardLayout";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import "./i18n/config";
+
+// Route-Level Code-Splitting with React.lazy()
+const LandingPage = React.lazy(() =>
+  import("./components/public/LandingPage").then((m) => ({ default: m.LandingPage }))
+);
+const SignInPage = React.lazy(() =>
+  import("./components/public/SignInPage").then((m) => ({ default: m.SignInPage }))
+);
+const SignUpPage = React.lazy(() =>
+  import("./components/public/SignUpPage").then((m) => ({ default: m.SignUpPage }))
+);
+const PublicPrivacyPage = React.lazy(() =>
+  import("./components/public/PublicPrivacyPage").then((m) => ({ default: m.PublicPrivacyPage }))
+);
+const PublicSyllabusPreview = React.lazy(() =>
+  import("./components/public/PublicSyllabusPreview").then((m) => ({ default: m.PublicSyllabusPreview }))
+);
+
+const DashboardHome = React.lazy(() =>
+  import("./components/dashboard/DashboardHome").then((m) => ({ default: m.DashboardHome }))
+);
+const ShadowSyllabusScreen = React.lazy(() =>
+  import("./components/screens/ShadowSyllabusScreen").then((m) => ({ default: m.ShadowSyllabusScreen }))
+);
+const PlannerSubView = React.lazy(() =>
+  import("./components/dashboard/PlannerSubView").then((m) => ({ default: m.PlannerSubView }))
+);
+const ResearchView = React.lazy(() =>
+  import("./components/research/ResearchView").then((m) => ({ default: m.ResearchView }))
+);
+const ResearchReportDetailView = React.lazy(() =>
+  import("./components/dashboard/ResearchReportDetailView").then((m) => ({ default: m.ResearchReportDetailView }))
+);
+const ProfilePage = React.lazy(() =>
+  import("./components/dashboard/ProfilePage").then((m) => ({ default: m.ProfilePage }))
+);
+const PrivacyCenterScreen = React.lazy(() =>
+  import("./components/screens/PrivacyCenterScreen").then((m) => ({ default: m.PrivacyCenterScreen }))
+);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+export const AppRoutes: React.FC = () => {
+  return (
+    <Routes>
+      {/* Canonical Public Routes */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/privacy" element={<PublicPrivacyPage />} />
+        <Route path="/syllabus" element={<PublicSyllabusPreview />} />
+      </Route>
+
+      {/* Canonical Authenticated Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<DashboardHome />} />
+          <Route path="/dashboard/syllabus" element={<ShadowSyllabusScreen />} />
+          <Route path="/dashboard/syllabus/planner" element={<PlannerSubView />} />
+          <Route path="/dashboard/research" element={<ResearchView />} />
+          <Route path="/dashboard/research/:id" element={<ResearchReportDetailView />} />
+          <Route path="/dashboard/profile" element={<ProfilePage />} />
+          <Route path="/dashboard/privacy" element={<PrivacyCenterScreen />} />
+        </Route>
+      </Route>
+
+      {/* Catch-All Redirect */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
 
 export const App: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 text-white p-2 rounded-lg">
-              <GraduationCap className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">Open Learning Platform</h1>
-              <p className="text-xs text-slate-500">Secure Modular Monolith Architecture</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
-            <ShieldCheck className="w-4 h-4" />
-            <span>GDPR & DPDP Compliant</span>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-6xl w-full mx-auto p-6 md:p-8">
-        <div className="mb-8 text-center max-w-xl mx-auto">
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Empowering Student Discovery</h2>
-          <p className="text-sm text-slate-600">
-            An open-source, minor-safe educational platform with pedagogical AI guidance, strict object-level permissions, and verifiable data governance.
-          </p>
-        </div>
-
-        <StudyCoach />
-      </main>
-
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        <p>Open Student Learning Platform &bull; Appendix A.3 Security Baseline Applied</p>
-      </footer>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 

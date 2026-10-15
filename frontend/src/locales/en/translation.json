@@ -1,0 +1,52 @@
+{
+  "app": {
+    "title": "Siksha OpenLearn",
+    "subtitle": "Accessible Student Learning Platform",
+    "privacyCompliance": "Designed to support GDPR & DPDP; legal review pending",
+    "switchTheme": "Toggle color mode",
+    "switchLanguage": "Language"
+  },
+  "research": {
+    "title": "Multi-Agent Research Deep Dive",
+    "subtitle": "Synthesize authoritative academic sources, cross-check claims, and audit evidence.",
+    "newInquiry": "New Research Inquiry",
+    "inquiryPlaceholder": "Enter an academic topic or question (e.g., Photosynthesis light-dependent reactions in C4 plants)...",
+    "submitInquiry": "Initiate Research",
+    "submitting": "Starting Research Agents...",
+    "recentReports": "Your Research Reports",
+    "noReports": "No research inquiries submitted yet.",
+    "rerun": "Rerun Pipeline",
+    "rerunning": "Rerunning...",
+    "sections": "Synthesized Sections",
+    "sources": "Referenced Sources & Citations",
+    "claims": "Fact-Checked Claims",
+    "verified": "Verified",
+    "refuted": "Refuted",
+    "unverified": "Unverified",
+    "peerReviewed": "Peer-Reviewed DOI",
+    "showSuperseded": "Show superseded draft artifacts",
+    "hideSuperseded": "Hide superseded draft artifacts",
+    "supersededBadge": "Superseded Historical Draft",
+    "rateLimitTitle": "Active Research Limit Reached",
+    "rateLimitMessage": "You have reached the maximum allowed concurrent research pipelines (3 parallel tasks). Please wait for an active task to finish before launching a new one.",
+    "retryIn": "Retry available in {{seconds}} seconds",
+    "close": "Close",
+    "guidanceNote": "Student research inquiries are independently evaluated by autonomous agents using verified academic sources, peer-reviewed DOIs, and strict robots.txt boundaries.",
+    "abstainTitle": "Research Abstained: Insufficient Evidence",
+    "abstainMessage": "The system could not find sufficient authoritative academic evidence on this topic to formulate a verifiable report.",
+    "unverifiedBannerTitle": "Verify before you trust",
+    "unverifiedBannerText": "Research reports are synthesized by AI and unverified by default. Independent verification against primary sources is required.",
+    "unverifiedBadge": "AI-Generated & Unverified",
+    "status": {
+      "PENDING": "Queued",
+      "ORCHESTRATING": "Orchestrating Subtopics",
+      "RESEARCHING": "Researching Literature",
+      "FACT_CHECKING": "Fact-Checking Claims",
+      "WRITING": "Synthesizing Report",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed",
+      "ABSTAINED": "Abstained (Insufficient Evidence)",
+      "UNKNOWN": "Unknown Status"
+    }
+  }
+}
