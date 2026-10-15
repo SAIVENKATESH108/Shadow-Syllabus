@@ -1,0 +1,119 @@
+{
+  "subject_code": "CS-204",
+  "curriculum": "DU CS-204 CBCS (2022-2026)",
+  "top_k_topics": 5,
+  "total_topics": 13,
+  "test_years": [
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "sample_sizes_by_year": {
+    "2021": {
+      "training_questions": 37,
+      "test_questions": 11,
+      "total_test_marks": 145,
+      "training_year_range": "2018\u20132020"
+    },
+    "2022": {
+      "training_questions": 48,
+      "test_questions": 18,
+      "total_test_marks": 200,
+      "training_year_range": "2018\u20132021"
+    },
+    "2023": {
+      "training_questions": 66,
+      "test_questions": 24,
+      "total_test_marks": 235,
+      "training_year_range": "2018\u20132022"
+    },
+    "2024": {
+      "training_questions": 90,
+      "test_questions": 15,
+      "total_test_marks": 170,
+      "training_year_range": "2018\u20132023"
+    }
+  },
+  "strategies_comparison": [
+    {
+      "strategy": "Random Topic Selection",
+      "yearly_capture_pct": {
+        "2021": 39.14,
+        "2022": 39.14,
+        "2023": 39.46,
+        "2024": 39.18
+      },
+      "mean_capture_pct": 39.23,
+      "std_dev": 0.13,
+      "delta_vs_syllabus_order": -4.89
+    },
+    {
+      "strategy": "Chronological Syllabus Order",
+      "yearly_capture_pct": {
+        "2021": 44.83,
+        "2022": 45.0,
+        "2023": 42.55,
+        "2024": 44.12
+      },
+      "mean_capture_pct": 44.12,
+      "std_dev": 0.97,
+      "delta_vs_syllabus_order": 0.0
+    },
+    {
+      "strategy": "Plain Question Frequency",
+      "yearly_capture_pct": {
+        "2021": 44.83,
+        "2022": 45.0,
+        "2023": 55.32,
+        "2024": 50.0
+      },
+      "mean_capture_pct": 48.79,
+      "std_dev": 4.31,
+      "delta_vs_syllabus_order": 4.66
+    },
+    {
+      "strategy": "No-Decay Marks Weighting",
+      "yearly_capture_pct": {
+        "2021": 44.83,
+        "2022": 55.0,
+        "2023": 51.06,
+        "2024": 61.76
+      },
+      "mean_capture_pct": 53.16,
+      "std_dev": 6.15,
+      "delta_vs_syllabus_order": 9.04
+    },
+    {
+      "strategy": "Last-Year-Only (Lag-1)",
+      "yearly_capture_pct": {
+        "2021": 48.28,
+        "2022": 50.0,
+        "2023": 51.06,
+        "2024": 50.0
+      },
+      "mean_capture_pct": 49.84,
+      "std_dev": 1.0,
+      "delta_vs_syllabus_order": 5.71
+    },
+    {
+      "strategy": "Shadow Syllabus (Recency Decay H=3.0)",
+      "yearly_capture_pct": {
+        "2021": 51.72,
+        "2022": 55.0,
+        "2023": 51.06,
+        "2024": 61.76
+      },
+      "mean_capture_pct": 54.88,
+      "std_dev": 4.24,
+      "delta_vs_syllabus_order": 10.76
+    }
+  ],
+  "scientific_disclosures": [
+    "Evaluated strictly on held-out test years using papers prior to test year only.",
+    "Marks capture rate measures percentage of exam marks falling within selected top-K topics.",
+    "Backtest recency decay (54.91% mean) shows a modest +1.73 percentage point difference over no-decay (53.18%), which is within the standard deviation (4.24%) and statistically inconclusive.",
+    "Historical backtest results demonstrate retrospective correlation, not a predictive guarantee of future exams.",
+    "Examiners retain the institutional prerogative to test any prescribed syllabus module."
+  ]
+}

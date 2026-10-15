@@ -248,8 +248,14 @@ def test_robots_negative_cache_expires() -> None:
     assert entry.get("allowed") is False
 
     # Expire the cache entry manually
-    from apps.research.web_safety import _in_memory_robots_cache
-    _in_memory_robots_cache[cache_key]["expires_at"] = time.time() - 1
+    from apps.research.web_safety import _in_memory_robots_cache, _redis_client
+    if cache_key in _in_memory_robots_cache:
+        _in_memory_robots_cache[cache_key]["expires_at"] = time.time() - 1
+    if _redis_client:
+        try:
+            _redis_client.delete(cache_key)
+        except Exception:
+            pass
 
     # 4. Target host has recovered; subsequent call re-evaluates and succeeds
     mock_success = mock.Mock(status_code=200, text="User-agent: *\nAllow: /\n")
@@ -876,6 +882,12 @@ def test_robots_redirect_chain_and_malformed_content() -> None:
 def test_robots_cache_poisoning_scheme_and_host_normalization() -> None:
     """Ensure mixed case domains and schemes map to identical normalized cache keys, and non-http schemes fail closed."""
     RobotsTxtValidator.clear_cache()
+    from apps.research.web_safety import _redis_client
+    if _redis_client:
+        try:
+            _redis_client.flushdb()
+        except Exception:
+            pass
 
     # Non-HTTP schemes must immediately fail closed without network call
     assert RobotsTxtValidator.is_allowed("ftp://archive.example.org/data") is False

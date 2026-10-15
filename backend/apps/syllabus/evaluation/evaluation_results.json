@@ -1,0 +1,428 @@
+{
+  "sample_size": 105,
+  "inter_annotator_agreement": {
+    "percentage": 93.33,
+    "cohens_kappa": 0.9268,
+    "labellers": [
+      "Labeller 1 (Faculty Evaluator)",
+      "Labeller 2 (Teaching Assistant)"
+    ]
+  },
+  "methods": {
+    "Keyword Frequency Baseline": {
+      "top1_accuracy": 0.9048,
+      "top3_accuracy": 0.981,
+      "macro_precision": 0.9503,
+      "macro_recall": 0.9095,
+      "macro_f1": 0.9189,
+      "per_class": {
+        "u1_p1": {
+          "name": "Characterization of Distributed Systems & System Models",
+          "support": 8,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.889
+        },
+        "u1_p2": {
+          "name": "Networking and Interprocess Communication (RPC, RMI)",
+          "support": 10,
+          "precision": 0.9,
+          "recall": 0.9,
+          "f1": 0.9
+        },
+        "u1_p3": {
+          "name": "Architectural Styles (Layered, Object-based, Event-driven)",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.933
+        },
+        "u2_p1": {
+          "name": "Logical Clocks (Lamport Timestamps & Vector Clocks)",
+          "support": 12,
+          "precision": 0.857,
+          "recall": 1.0,
+          "f1": 0.923
+        },
+        "u2_p2": {
+          "name": "Distributed Mutual Exclusion (Ricart-Agrawala, Maekawa)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u2_p3": {
+          "name": "Election Algorithms (Bully Algorithm, Ring Algorithm)",
+          "support": 9,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u3_p1": {
+          "name": "Consensus in Crash-Fault Environments (Raft & Paxos)",
+          "support": 11,
+          "precision": 0.846,
+          "recall": 1.0,
+          "f1": 0.917
+        },
+        "u3_p2": {
+          "name": "Byzantine Generals Problem & Agreement Impossibility",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.857
+        },
+        "u3_p3": {
+          "name": "Failure Detectors & Quorum-based Replication",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u4_p1": {
+          "name": "Consistency Models (Linearizability, Eventual Consistency)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667
+        },
+        "u4_p2": {
+          "name": "Distributed Transactions & Two-Phase Commit (2PC)",
+          "support": 9,
+          "precision": 1.0,
+          "recall": 0.889,
+          "f1": 0.941
+        },
+        "u4_p3": {
+          "name": "Distributed Shared Memory & Cache Coherence",
+          "support": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "confusion_matrix": {
+        "u1_p1": {
+          "u1_p1": 8
+        },
+        "u1_p2": {
+          "u1_p2": 9,
+          "u4_p4": 1
+        },
+        "u1_p3": {
+          "u1_p3": 7,
+          "u4_p4": 1
+        },
+        "u2_p1": {
+          "u2_p1": 12
+        },
+        "u2_p2": {
+          "u2_p2": 10
+        },
+        "u2_p3": {
+          "u2_p3": 9
+        },
+        "u3_p1": {
+          "u3_p1": 11
+        },
+        "u3_p2": {
+          "u3_p2": 6,
+          "u2_p1": 1,
+          "u3_p1": 1
+        },
+        "u3_p3": {
+          "u3_p3": 8
+        },
+        "u4_p1": {
+          "u1_p1": 2,
+          "u4_p1": 5,
+          "u1_p2": 1,
+          "u4_p4": 1,
+          "u2_p1": 1
+        },
+        "u4_p2": {
+          "u4_p2": 8,
+          "u3_p1": 1
+        },
+        "u4_p3": {
+          "u4_p3": 2
+        }
+      }
+    },
+    "Embeddings-Only Cosine Similarity": {
+      "top1_accuracy": 0.9524,
+      "top3_accuracy": 1.0,
+      "macro_precision": 0.9626,
+      "macro_recall": 0.9532,
+      "macro_f1": 0.9555,
+      "per_class": {
+        "u1_p1": {
+          "name": "Characterization of Distributed Systems & System Models",
+          "support": 8,
+          "precision": 0.778,
+          "recall": 0.875,
+          "f1": 0.824
+        },
+        "u1_p2": {
+          "name": "Networking and Interprocess Communication (RPC, RMI)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u1_p3": {
+          "name": "Architectural Styles (Layered, Object-based, Event-driven)",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u2_p1": {
+          "name": "Logical Clocks (Lamport Timestamps & Vector Clocks)",
+          "support": 12,
+          "precision": 0.857,
+          "recall": 1.0,
+          "f1": 0.923
+        },
+        "u2_p2": {
+          "name": "Distributed Mutual Exclusion (Ricart-Agrawala, Maekawa)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u2_p3": {
+          "name": "Election Algorithms (Bully Algorithm, Ring Algorithm)",
+          "support": 9,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u3_p1": {
+          "name": "Consensus in Crash-Fault Environments (Raft & Paxos)",
+          "support": 11,
+          "precision": 0.917,
+          "recall": 1.0,
+          "f1": 0.957
+        },
+        "u3_p2": {
+          "name": "Byzantine Generals Problem & Agreement Impossibility",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.933
+        },
+        "u3_p3": {
+          "name": "Failure Detectors & Quorum-based Replication",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u4_p1": {
+          "name": "Consistency Models (Linearizability, Eventual Consistency)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.889
+        },
+        "u4_p2": {
+          "name": "Distributed Transactions & Two-Phase Commit (2PC)",
+          "support": 9,
+          "precision": 1.0,
+          "recall": 0.889,
+          "f1": 0.941
+        },
+        "u4_p3": {
+          "name": "Distributed Shared Memory & Cache Coherence",
+          "support": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "confusion_matrix": {
+        "u1_p1": {
+          "u1_p1": 7,
+          "u2_p1": 1
+        },
+        "u1_p2": {
+          "u1_p2": 10
+        },
+        "u1_p3": {
+          "u1_p3": 8
+        },
+        "u2_p1": {
+          "u2_p1": 12
+        },
+        "u2_p2": {
+          "u2_p2": 10
+        },
+        "u2_p3": {
+          "u2_p3": 9
+        },
+        "u3_p1": {
+          "u3_p1": 11
+        },
+        "u3_p2": {
+          "u3_p2": 7,
+          "u1_p1": 1
+        },
+        "u3_p3": {
+          "u3_p3": 8
+        },
+        "u4_p1": {
+          "u4_p1": 8,
+          "u2_p1": 1,
+          "u1_p1": 1
+        },
+        "u4_p2": {
+          "u4_p2": 8,
+          "u3_p1": 1
+        },
+        "u4_p3": {
+          "u4_p3": 2
+        }
+      }
+    },
+    "Shadow Syllabus (Embeddings + Model Rationale)": {
+      "top1_accuracy": 0.9143,
+      "top3_accuracy": 0.981,
+      "macro_precision": 0.9586,
+      "macro_recall": 0.9178,
+      "macro_f1": 0.9298,
+      "per_class": {
+        "u1_p1": {
+          "name": "Characterization of Distributed Systems & System Models",
+          "support": 8,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.889
+        },
+        "u1_p2": {
+          "name": "Networking and Interprocess Communication (RPC, RMI)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 0.9,
+          "f1": 0.947
+        },
+        "u1_p3": {
+          "name": "Architectural Styles (Layered, Object-based, Event-driven)",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.875,
+          "f1": 0.933
+        },
+        "u2_p1": {
+          "name": "Logical Clocks (Lamport Timestamps & Vector Clocks)",
+          "support": 12,
+          "precision": 0.857,
+          "recall": 1.0,
+          "f1": 0.923
+        },
+        "u2_p2": {
+          "name": "Distributed Mutual Exclusion (Ricart-Agrawala, Maekawa)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u2_p3": {
+          "name": "Election Algorithms (Bully Algorithm, Ring Algorithm)",
+          "support": 9,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u3_p1": {
+          "name": "Consensus in Crash-Fault Environments (Raft & Paxos)",
+          "support": 11,
+          "precision": 0.846,
+          "recall": 1.0,
+          "f1": 0.917
+        },
+        "u3_p2": {
+          "name": "Byzantine Generals Problem & Agreement Impossibility",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.857
+        },
+        "u3_p3": {
+          "name": "Failure Detectors & Quorum-based Replication",
+          "support": 8,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "u4_p1": {
+          "name": "Consistency Models (Linearizability, Eventual Consistency)",
+          "support": 10,
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75
+        },
+        "u4_p2": {
+          "name": "Distributed Transactions & Two-Phase Commit (2PC)",
+          "support": 9,
+          "precision": 1.0,
+          "recall": 0.889,
+          "f1": 0.941
+        },
+        "u4_p3": {
+          "name": "Distributed Shared Memory & Cache Coherence",
+          "support": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "confusion_matrix": {
+        "u1_p1": {
+          "u1_p1": 8
+        },
+        "u1_p2": {
+          "u1_p2": 9,
+          "u4_p4": 1
+        },
+        "u1_p3": {
+          "u1_p3": 7,
+          "u4_p4": 1
+        },
+        "u2_p1": {
+          "u2_p1": 12
+        },
+        "u2_p2": {
+          "u2_p2": 10
+        },
+        "u2_p3": {
+          "u2_p3": 9
+        },
+        "u3_p1": {
+          "u3_p1": 11
+        },
+        "u3_p2": {
+          "u3_p2": 6,
+          "u2_p1": 1,
+          "u3_p1": 1
+        },
+        "u3_p3": {
+          "u3_p3": 8
+        },
+        "u4_p1": {
+          "u1_p1": 2,
+          "u4_p1": 6,
+          "u4_p4": 1,
+          "u2_p1": 1
+        },
+        "u4_p2": {
+          "u4_p2": 8,
+          "u3_p1": 1
+        },
+        "u4_p3": {
+          "u4_p3": 2
+        }
+      }
+    }
+  }
+}

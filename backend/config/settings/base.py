@@ -40,6 +40,7 @@ LOCAL_APPS = [
     "apps.assessments",
     "apps.ai_gateway",
     "apps.research",
+    "apps.syllabus",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -131,6 +132,12 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/minute",
+        "user": "300/minute",
+        "planner_anon": "10/minute",
+        "planner_user": "30/minute",
+    },
 }
 
 SPECTACULAR_SETTINGS = {
