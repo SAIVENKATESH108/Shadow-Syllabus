@@ -1,5 +1,7 @@
 # Open Student Learning Platform
 
+# Shadow-Syllabus
+
 A secure, modular learning platform designed for global students, built with **Django 5**, **DRF**, **Channels**, **Celery**, **PostgreSQL with pgvector**, **Redis**, **MinIO**, and a **React 18 + TypeScript + Vite + Tailwind** frontend.
 
 ---
