@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { useUIStore } from "../../store/uiStore";
+import { requestDataErasure } from "../../api/user";
 
 export const PrivacyCenterScreen: React.FC = () => {
   const { userProfile } = useUIStore();
@@ -34,8 +35,28 @@ export const PrivacyCenterScreen: React.FC = () => {
   const [exportFormat, setExportFormat] = useState<"json" | "pdf">("json");
   const [deletionStatus, setDeletionStatus] = useState<"idle" | "scheduled">("idle");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [isSubmittingErasure, setIsSubmittingErasure] = useState(false);
+  const [erasureError, setErasureError] = useState<string | null>(null);
   const [cachePurged, setCachePurged] = useState(false);
   const [grievanceSubmitted, setGrievanceSubmitted] = useState(false);
+
+  const handleScheduleDeletion = async () => {
+    if (!passwordConfirm.trim()) {
+      alert("Please enter password to confirm deletion request.");
+      return;
+    }
+    try {
+      setIsSubmittingErasure(true);
+      setErasureError(null);
+      await requestDataErasure();
+      setDeletionStatus("scheduled");
+      setPasswordConfirm("");
+    } catch (err) {
+      setErasureError(err instanceof Error ? err.message : "Failed to submit erasure request");
+    } finally {
+      setIsSubmittingErasure(false);
+    }
+  };
 
   const handleExport = () => {
     const data = {
@@ -83,7 +104,7 @@ export const PrivacyCenterScreen: React.FC = () => {
             Your Privacy &amp; Personal Data Sovereignty
           </h2>
           <p className="text-body-md text-academic-slate-600 dark:text-academic-slate-300 max-w-3xl mt-1">
-            Manage your statutory rights with zero cognitive friction. At Siksha, learning data belongs solely to the student: no manipulative dark patterns, no coerced consent traps, and no silent third-party algorithmic telemetry.
+            Manage your privacy rights with zero cognitive friction. At Siksha, learning data belongs solely to the student: no manipulative dark patterns, no coerced consent traps, and no silent third-party algorithmic telemetry.
           </p>
         </div>
 
@@ -603,7 +624,7 @@ export const PrivacyCenterScreen: React.FC = () => {
             Delete Account &amp; Personal Data
           </h3>
           <p className="text-body-sm text-academic-slate-600 dark:text-academic-slate-400">
-            Execute your statutory right to be forgotten. Requesting deletion purges all profile records, syllabi, study room chats, and bookmarks across production engines and immutable cold archives.
+            Execute your right to be forgotten. Requesting deletion purges all profile records, syllabi, study room chats, and bookmarks across production engines and immutable cold archives.
           </p>
         </div>
 
@@ -639,21 +660,20 @@ export const PrivacyCenterScreen: React.FC = () => {
             />
             <button
               type="button"
-              onClick={() => {
-                if (passwordConfirm.trim()) {
-                  setDeletionStatus("scheduled");
-                  setPasswordConfirm("");
-                } else {
-                  alert("Please enter password to confirm deletion request.");
-                }
-              }}
-              className="min-h-touch px-5 py-3 bg-red-600 text-white font-semibold text-label-md rounded-xl hover:bg-red-700 shadow-sm transition"
+              disabled={isSubmittingErasure}
+              onClick={handleScheduleDeletion}
+              className="min-h-touch px-5 py-3 bg-red-600 text-white font-semibold text-label-md rounded-xl hover:bg-red-700 disabled:opacity-50 shadow-sm transition"
             >
-              Schedule Deletion
+              {isSubmittingErasure ? "Submitting Request..." : "Schedule Deletion"}
             </button>
             <span className="text-body-sm text-academic-slate-500 italic">
               No manipulative retention surveys or phone verification hurdles required.
             </span>
+          </div>
+        )}
+        {erasureError && (
+          <div className="mt-2 text-label-sm font-semibold text-red-600 dark:text-red-400">
+            {erasureError}
           </div>
         )}
       </div>
@@ -662,7 +682,7 @@ export const PrivacyCenterScreen: React.FC = () => {
       <div className="bg-white dark:bg-academic-slate-800 rounded-3xl p-6 md:p-8 border border-academic-slate-200 dark:border-academic-slate-700 shadow-structural space-y-5">
         <div className="border-b border-academic-slate-200 dark:border-academic-slate-700 pb-3">
           <div className="text-label-sm font-bold text-academic-primary uppercase tracking-wide">
-            Statutory Escalation Channel
+            Designated Escalation Channel
           </div>
           <h3 className="text-headline-md font-bold text-academic-slate-900 dark:text-academic-slate-100">
             Data Protection Officer &amp; Grievance Redressal
@@ -820,7 +840,7 @@ export const PrivacyCenterScreen: React.FC = () => {
                 className="space-y-4"
               >
                 <p className="text-body-sm text-academic-slate-600 dark:text-academic-slate-300">
-                  This communication is directly routed to the statutory Data Protection Officer. Privacy requests are handled according to the platform’s published retention and escalation policy.
+                  This communication is directly routed to the designated Data Protection Officer. Privacy requests are handled according to the platform’s published retention and escalation policy.
                 </p>
 
                 <div>

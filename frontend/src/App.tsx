@@ -38,6 +38,9 @@ const ResearchView = React.lazy(() =>
 const ResearchReportDetailView = React.lazy(() =>
   import("./components/dashboard/ResearchReportDetailView").then((m) => ({ default: m.ResearchReportDetailView }))
 );
+const StudyCoachScreen = React.lazy(() =>
+  import("./components/screens/StudyCoachScreen").then((m) => ({ default: m.StudyCoachScreen }))
+);
 const ProfilePage = React.lazy(() =>
   import("./components/dashboard/ProfilePage").then((m) => ({ default: m.ProfilePage }))
 );
@@ -72,6 +75,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/dashboard/syllabus" element={<ShadowSyllabusScreen />} />
           <Route path="/dashboard/syllabus/planner" element={<PlannerSubView />} />
+          <Route path="/dashboard/study-coach" element={<StudyCoachScreen />} />
           <Route path="/dashboard/research" element={<ResearchView />} />
           <Route path="/dashboard/research/:id" element={<ResearchReportDetailView />} />
           <Route path="/dashboard/profile" element={<ProfilePage />} />

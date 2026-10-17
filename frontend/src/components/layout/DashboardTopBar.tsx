@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  ChevronRight,
   Globe,
-  Home,
   LogOut,
   Menu,
   Moon,
@@ -19,7 +17,6 @@ interface DashboardTopBarProps {
 }
 
 export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDrawer }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
   const {
@@ -34,28 +31,29 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
   } = useUIStore();
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Compute dynamic breadcrumbs from path
-  const pathnames = location.pathname.split("/").filter((x) => x);
-
-  const getBreadcrumbLabel = (segment: string): string => {
-    switch (segment) {
-      case "dashboard":
-        return "Dashboard";
-      case "syllabus":
-        return "Shadow Syllabus";
-      case "planner":
-        return "Study Planner";
-      case "research":
-        return "Multi-Agent Research";
-      case "profile":
-        return "Student Profile";
-      case "privacy":
-        return "Privacy Centre";
-      default:
-        return segment.length > 12 ? `${segment.slice(0, 10)}...` : segment;
+  // Close user menu on outside click or Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isUserMenuOpen) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    if (isUserMenuOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("mousedown", handleClickOutside);
     }
-  };
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
 
   const handleLogout = () => {
     logout();
@@ -69,76 +67,40 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
   };
 
   return (
-    <header className="bg-white dark:bg-academic-slate-800 border-b border-academic-slate-200 dark:border-academic-slate-700 h-16 px-4 sm:px-6 flex items-center justify-between gap-4 shadow-sm sticky top-0 z-30">
-      {/* Left: Mobile hamburger & Breadcrumbs */}
+    <header className="fixed top-0 right-0 left-0 lg:left-64 h-16 z-20 bg-white/95 dark:bg-academic-slate-800/95 backdrop-blur-md border-b border-academic-slate-200 dark:border-academic-slate-700 px-4 sm:px-6 flex items-center justify-between gap-4 shadow-sm">
+      {/* Left: Mobile hamburger & Active Context */}
       <div className="flex items-center gap-3 min-w-0">
         <button
           type="button"
           onClick={onOpenMobileDrawer}
           aria-label="Open navigation menu"
-          className="lg:hidden p-2 rounded-xl text-academic-slate-600 dark:text-academic-slate-300 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 focus-visible:ring-2 focus-visible:ring-academic-primary"
+          className="lg:hidden min-h-[44px] min-w-[44px] p-2.5 rounded-xl text-academic-slate-600 dark:text-academic-slate-300 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary flex items-center justify-center"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        {/* Dynamic Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="min-w-0">
-          <ol className="flex items-center gap-1.5 text-label-sm font-medium text-academic-slate-500 dark:text-academic-slate-400 truncate">
-            <li>
-              <Link
-                to="/dashboard"
-                className="hover:text-academic-primary dark:hover:text-white transition flex items-center gap-1"
-              >
-                <Home className="w-3.5 h-3.5" aria-hidden="true" />
-                <span className="sr-only">Dashboard Home</span>
-              </Link>
-            </li>
-            {pathnames.map((segment, index) => {
-              const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-              const isLast = index === pathnames.length - 1;
-              const label = getBreadcrumbLabel(segment);
-
-              return (
-                <li key={routeTo} className="flex items-center gap-1.5 truncate">
-                  <ChevronRight className="w-3.5 h-3.5 text-academic-slate-400 flex-shrink-0" aria-hidden="true" />
-                  {isLast ? (
-                    <span
-                      aria-current="page"
-                      className="font-bold text-academic-slate-900 dark:text-academic-slate-50 truncate"
-                    >
-                      {label}
-                    </span>
-                  ) : (
-                    <Link
-                      to={routeTo}
-                      className="hover:text-academic-primary dark:hover:text-white transition truncate"
-                    >
-                      {label}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        </nav>
+        <div className="hidden sm:block text-label-sm font-semibold text-academic-slate-600 dark:text-academic-slate-300 truncate">
+          <span className="text-academic-slate-400 dark:text-academic-slate-500 mr-1.5 font-normal">Syllabus:</span>
+          Delhi University CS-204
+        </div>
       </div>
 
       {/* Right: Controls & User Profile */}
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-        {/* Legal Disclaimer Pill */}
+        {/* Approved Non-Assertive Disclaimer Pill */}
         <div
-          title="Designed to support GDPR and India’s DPDP Act requirements; formal legal review is pending."
-          className="hidden xl:flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-300 dark:border-emerald-800 truncate max-w-xs"
+          title="Designed to support GDPR and India’s DPDP Act requirements. Formal legal review is pending."
+          className="hidden xl:flex items-center gap-1.5 text-[11px] font-semibold text-academic-primary dark:text-academic-slate-200 bg-academic-primary/10 dark:bg-academic-primary/20 px-3 py-1 rounded-full border border-academic-primary/20 truncate max-w-xs"
         >
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" aria-hidden="true" />
-          <span className="truncate">GDPR &amp; DPDP Support (Legal Review Pending)</span>
+          <ShieldCheck className="w-3.5 h-3.5 text-academic-primary flex-shrink-0" aria-hidden="true" />
+          <span className="truncate">GDPR &amp; DPDP Support (Review Pending)</span>
         </div>
 
-        {/* High Contrast Toggle */}
+        {/* High Contrast Toggle (WCAG 2.2 AA) */}
         <button
           type="button"
           onClick={toggleHighContrast}
-          className={`min-h-touch px-2.5 py-1.5 rounded-xl border text-label-sm font-semibold transition hidden sm:inline-flex items-center gap-1 ${
+          className={`min-h-[44px] px-3 py-2 rounded-xl border text-label-sm font-semibold transition hidden sm:inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary ${
             highContrast
               ? "bg-academic-slate-900 text-white dark:bg-white dark:text-academic-slate-900 border-transparent shadow-sm"
               : "bg-academic-slate-50 dark:bg-academic-slate-700 text-academic-slate-700 dark:text-academic-slate-200 border-academic-slate-200 dark:border-academic-slate-600 hover:bg-academic-slate-100"
@@ -146,14 +108,14 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
           aria-label="Toggle High Contrast Mode"
         >
           <span className="font-bold">A</span>
-          <span className="text-[10px]">Contrast</span>
+          <span className="text-[11px]">Contrast</span>
         </button>
 
         {/* Language Switcher */}
         <button
           type="button"
           onClick={handleLanguageToggle}
-          className="min-h-touch px-2.5 py-1.5 rounded-xl border border-academic-slate-200 dark:border-academic-slate-700 bg-academic-slate-50 dark:bg-academic-slate-700 text-label-sm font-semibold hover:bg-academic-slate-100 dark:hover:bg-academic-slate-600 transition flex items-center gap-1"
+          className="min-h-[44px] px-3 py-2 rounded-xl border border-academic-slate-200 dark:border-academic-slate-700 bg-academic-slate-50 dark:bg-academic-slate-700 text-label-sm font-semibold hover:bg-academic-slate-100 dark:hover:bg-academic-slate-600 transition flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary"
           aria-label="Switch Language"
         >
           <Globe className="w-4 h-4 text-academic-primary" aria-hidden="true" />
@@ -164,7 +126,7 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
         <button
           type="button"
           onClick={toggleTheme}
-          className="min-h-touch p-2 rounded-xl border border-academic-slate-200 dark:border-academic-slate-700 bg-academic-slate-50 dark:bg-academic-slate-700 text-academic-slate-700 dark:text-academic-slate-200 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-600 transition"
+          className="min-h-[44px] min-w-[44px] p-2.5 rounded-xl border border-academic-slate-200 dark:border-academic-slate-700 bg-academic-slate-50 dark:bg-academic-slate-700 text-academic-slate-700 dark:text-academic-slate-200 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-600 transition flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary"
           aria-label="Toggle Color Theme"
         >
           {theme === "light" ? (
@@ -175,13 +137,14 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
         </button>
 
         {/* User Profile Menu */}
-        <div className="relative">
+        <div className="relative" ref={userMenuRef}>
           <button
             type="button"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            className="flex items-center gap-2 p-1.5 pr-2.5 rounded-xl hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 transition focus-visible:ring-2 focus-visible:ring-academic-primary"
+            className="min-h-[44px] flex items-center gap-2 p-1.5 pr-2.5 rounded-xl hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary"
             aria-expanded={isUserMenuOpen}
             aria-haspopup="true"
+            aria-label={`User account menu for ${userProfile?.username || "Student"}`}
           >
             <div className="w-8 h-8 rounded-full bg-academic-primary text-white flex items-center justify-center font-bold text-label-md">
               {userProfile?.username?.charAt(0).toUpperCase() || "S"}
@@ -209,7 +172,7 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
                 to="/dashboard/profile"
                 role="menuitem"
                 onClick={() => setIsUserMenuOpen(false)}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-label-md text-academic-slate-700 dark:text-academic-slate-300 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 transition"
+                className="w-full min-h-[44px] flex items-center gap-2.5 px-3 py-2 rounded-xl text-label-md text-academic-slate-700 dark:text-academic-slate-300 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary"
               >
                 <UserIcon className="w-4 h-4 text-academic-primary" />
                 <span>Student Profile</span>
@@ -219,7 +182,7 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
                 to="/dashboard/privacy"
                 role="menuitem"
                 onClick={() => setIsUserMenuOpen(false)}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-label-md text-academic-slate-700 dark:text-academic-slate-300 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 transition"
+                className="w-full min-h-[44px] flex items-center gap-2.5 px-3 py-2 rounded-xl text-label-md text-academic-slate-700 dark:text-academic-slate-300 hover:bg-academic-slate-100 dark:hover:bg-academic-slate-700 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary"
               >
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <span>Privacy &amp; Data Rights</span>
@@ -229,7 +192,7 @@ export const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ onOpenMobileDr
                 type="button"
                 role="menuitem"
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-label-md text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition mt-1"
+                className="w-full min-h-[44px] flex items-center gap-2.5 px-3 py-2 rounded-xl text-label-md text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition mt-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out</span>

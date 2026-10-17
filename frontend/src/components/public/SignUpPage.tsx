@@ -133,7 +133,7 @@ export const SignUpPage: React.FC = () => {
           {/* Age Verification Bracket */}
           <div className="p-3.5 bg-academic-slate-50 dark:bg-academic-slate-900 rounded-2xl border border-academic-slate-200 dark:border-academic-slate-700 space-y-2">
             <span className="text-label-sm font-semibold text-academic-slate-800 dark:text-academic-slate-200">
-              Statutory Age Verification
+              Age Verification
             </span>
             <div className="flex items-center gap-4 text-body-sm">
               <label className="flex items-center gap-2 cursor-pointer">

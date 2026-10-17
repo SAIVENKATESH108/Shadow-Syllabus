@@ -54,7 +54,7 @@ export const PublicPrivacyPage: React.FC = () => {
           Retention &amp; Escalation Policy
         </h2>
         <p className="text-body-md text-academic-slate-600 dark:text-academic-slate-300">
-          Privacy requests are handled according to the platform’s published retention and escalation policy. Inquiries and statutory data rectification requests can be submitted via the designated Grievance Channel.
+          Privacy requests are handled according to the platform’s published retention and escalation policy. Inquiries and data rectification requests can be submitted via the designated Grievance Channel.
         </p>
         <div className="p-4 bg-academic-slate-50 dark:bg-academic-slate-900/60 rounded-2xl border border-academic-slate-200 dark:border-academic-slate-700 text-body-sm text-academic-slate-600 dark:text-academic-slate-400 space-y-1">
           <div>

@@ -85,7 +85,17 @@ describe("Content Security Policy (CSP) Regression & Invariant Tests", () => {
       expect(content).not.toContain("dev-quick-demo-login-btn");
       expect(content).not.toContain("synthetic-demo-student@local.dev");
       expect(content).not.toContain("Quick Demo Sign In");
+
+      // Mandate: Production JS must not hardcode development loopback origins
+      expect(content).not.toContain("http://127.0.0.1:8000");
+      expect(content).not.toContain("ws://127.0.0.1:8000");
+      expect(content).not.toContain("http://localhost:8000");
+      expect(content).not.toContain("ws://localhost:8000");
     }
   });
 });
+
+
+
+
 

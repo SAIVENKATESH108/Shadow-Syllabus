@@ -9,16 +9,43 @@ interface MobileDrawerProps {
 
 export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
         onClose();
+        return;
+      }
+      if (e.key === "Tab" && isOpen && drawerRef.current) {
+        const focusableElements = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
       }
     };
+
     if (isOpen) {
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
+      // Automatically focus the close button when opened
+      setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 50);
     } else {
       document.body.style.overflow = "";
     }
@@ -51,10 +78,11 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
       >
         <div className="absolute top-3 right-3 z-20">
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             aria-label="Close Navigation"
-            className="p-2 rounded-xl text-academic-slate-500 hover:text-academic-slate-900 dark:hover:text-white bg-academic-slate-100 dark:bg-academic-slate-700 transition"
+            className="min-h-[44px] min-w-[44px] p-2.5 rounded-xl text-academic-slate-500 hover:text-academic-slate-900 dark:hover:text-white bg-academic-slate-100 dark:bg-academic-slate-700 transition flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-academic-primary"
           >
             <X className="w-5 h-5" />
           </button>

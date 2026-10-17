@@ -74,6 +74,7 @@ describe("Frontend Core & Security UI Tests", () => {
     expect(screen.getByRole("link", { name: /Shadow Syllabus/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Study Planner/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Multi-Agent Research/i })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /AI Study Coach/i })).toBeNull();
     expect(await screen.findByText("Delhi University Distributed Systems (CS-204)", {}, { timeout: 5000 })).toBeInTheDocument();
   });
 
